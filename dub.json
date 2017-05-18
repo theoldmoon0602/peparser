@@ -1,0 +1,9 @@
+{
+	"name": "peparser",
+	"authors": [
+		"TOMORI"
+	],
+	"description": "PE file Parser",
+	"copyright": "Copyright © 2017, TOMORI",
+	"license": "Apache2.0"
+}
