@@ -1,27 +1,23 @@
-import std.stdio, std.algorithm, std.array, std.conv;
+import std.stdio, std.algorithm, std.array, std.conv, std.range;
 
 import types;
 
 /// 任意の型を読む
 T readT(T)(File f) {
     T v;
-    f.read(v);
+    f.rawRead((&v)[0..1]);
+    return v;
+}
+T read(T)(File f, ref T v)
+    if (!hasLength!T)
+{
+    f.rawRead((&v)[0..1]);
     return v;
 }
 alias readBYTE = readT!BYTE;
 alias readWORD = readT!WORD;
 alias readDWORD = readT!DWORD;
 alias readUINT64 = readT!ULONGLONG;
-
-/// 任意の値を読む
-T read(T)(File f, ref T v) if (isArray(T) && v.length > 0) {
-    f.rawRead(v);
-    return v;
-}
-T read(T)(File f, ref T v) {
-    f.rawRead((&v)[0..1]);
-    return v;
-}
 
 /// 奇妙にエンコーディングされた数値列を読む
 UINT64 read7BitEncodedInteger(File f)
@@ -55,6 +51,7 @@ UINT64 read7BitEncodedInteger(File f)
 }
 byte[] readBlob(File f) {
     auto l = f.read7BitEncodedInteger;
+
     byte[] buf = new byte[](cast(uint)l);
     f.rawRead(buf);
     return buf;

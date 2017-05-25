@@ -9,7 +9,7 @@ NTHeader readNTHeader(File f)
 {
     NTHeader header;
 
-    f.read(header.Signature);
+    f.rawRead(header.Signature);
     f.read(header.FileHeader);
 
     header.read_image_optional_header(f);
@@ -65,7 +65,9 @@ struct NTHeader
         else if(Magic == MAGIC.HDR64) {
             f.read(OptionalHeader64);
         }
-        throw new Exception("Unknown Maigc Number: " ~ Magic.to!string);
+        else {
+            throw new Exception("Unknown Maigc Number: " ~ Magic.to!string);
+        }
     }
     
 }
@@ -84,8 +86,6 @@ struct IMAGE_FILE_HEADER
 
 enum int IMAGE_NUMBEROF_DIRECTORY_ENTRIES = 16;
 struct IMAGE_OPTIONAL_HEADER32 {
-
-
     WORD                 Magic;
     BYTE                 MajorLinkerVersion;
     BYTE                 MinorLinkerVersion;

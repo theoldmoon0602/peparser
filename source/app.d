@@ -4,6 +4,7 @@ import nt;
 import sectionheader;
 import utils;
 import resourcessection;
+import cor20;
 
 int main(string[] args)
 {
@@ -17,6 +18,7 @@ int main(string[] args)
 	auto ntheader = readNTHeader(f);
 	auto sectionHeaders = readSectionHeaders(f, ntheader.FileHeader.NumberOfSections);
 	auto cor20 = readCOR20HEADER(f, ntheader, sectionHeaders);
+	f.seek(cor20.Resources.physicalAddr(sectionHeaders) + 4);
 	auto resourcesHeader = readResourcesHeader(f);
 	writeln(resourcesHeader);
 	auto resources = readResources(f, resourcesHeader);
