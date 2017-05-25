@@ -20,7 +20,7 @@ struct SectionHeader
     DWORD Characteristics;
 
     string toString() {
-        return "SectionHeader<" ~ Name.to!string ~ ">" ~ flagStrings.to!string;
+        return "SectionHeader<" ~ Name.to!string ~ ">" ~ PointerToRawData.to!string ~ flagStrings.to!string;
     }
     bool isExecutable() {
         DWORD IMAGE_SCN_MEM_EXECUTE=0x20000000;

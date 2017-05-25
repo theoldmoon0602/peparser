@@ -2,7 +2,9 @@ import std.stdio, std.range;
 import msdos;
 import nt;
 import sectionheader;
+import resource;
 import utils;
+import cliheader;
 
 int main(string[] args)
 {
@@ -15,22 +17,12 @@ int main(string[] args)
 	f.seek(dosHeader.e_lfanew);
 	auto ntheader = readNTHeader(f);
 	auto sectionHeaders = readSectionHeaders(f, ntheader.FileHeader.NumberOfSections);
-	auto sectionDatas = readSectionDatas(f, sectionHeaders);
-	// auto sectionData = readSectionData(f, sectionHeaders[0]);
-	writeln(dosHeader);
-	writeln(ntheader);
-	writeln(sectionHeaders);
-	// writeln(sectionData);
-	writeln(sectionDatas[0]);
-	foreach(section; zip(sectionHeaders, sectionDatas)) {
-
-		if (section[0].isExecutable) {
-			continue;
-		}
-		if (! section[0].isInitialized) {
-			continue;
-		}
-		writeln(section);
-	}
+	auto cor20 = readCOR20HEADER(f, ntheader, sectionHeaders);
+	auto rscAddr = cor20.Resources.physicalAddr(sectionHeaders);
+	f.seek(rscAddr);
+	auto resourcesHeader = readDotResources(f);
+	writeln(resourcesHeader);
+	auto resources = readResources(f, resourcesHeader);
+	writeln(resources);	
 	return 0;
 }

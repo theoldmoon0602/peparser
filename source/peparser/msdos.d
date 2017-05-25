@@ -1,10 +1,9 @@
 import std.stdio;
 
-import types;
+import types, utils;
 
 /// DOS ファイルのヘッダ
 struct DOSHeader {
-    
     char[2]   e_magic;                     // Magic number
     WORD   e_cblp;                      // Bytes on last page of file
     WORD   e_cp;                        // Pages in file
@@ -25,10 +24,4 @@ struct DOSHeader {
     WORD[10]   e_res2;                  // Reserved words
     LONG   e_lfanew;                    // File address of new exe header
 }
-
-/// DOSHeaderを読む
-DOSHeader readDOSHeader(File f) {
-    DOSHeader header;
-    f.rawRead((&header)[0..1]);
-    return header;
-}
+alias readDOSHeader = readT!DOSHeader;
