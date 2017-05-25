@@ -1,6 +1,20 @@
 import std.stdio, std.conv, std.algorithm, std.ascii;
 
-import types;
+import types, utils;
+
+
+alias readSectionHeader = readT!SectionHeader;
+
+SectionHeader[] readSectionHeaders(File f, WORD numberOfSections)
+{
+    SectionHeader[] headers;
+    headers.reserve(numberOfSections);
+    foreach(i; 0..numberOfSections)
+    {
+        headers ~= readSectionHeader(f);
+    }
+    return headers;
+}
 
 struct SectionHeader
 {
@@ -22,6 +36,7 @@ struct SectionHeader
     string toString() {
         return "SectionHeader<" ~ Name.to!string ~ ">" ~ PointerToRawData.to!string ~ flagStrings.to!string;
     }
+    // FLAGが立っているかどうかを表すメソッド（使わない）
     bool isExecutable() {
         DWORD IMAGE_SCN_MEM_EXECUTE=0x20000000;
         return (Characteristics&IMAGE_SCN_MEM_EXECUTE) != 0;
@@ -61,59 +76,4 @@ struct SectionHeader
         } 
         return flags;
     }
-}
-
-SectionHeader readSectionHeader(File f)
-{
-    SectionHeader header;
-    f.rawRead((&header)[0..1]);
-    return header;
-}
-
-SectionHeader[] readSectionHeaders(File f, WORD numberOfSections)
-{
-    SectionHeader[] headers;
-    headers.reserve(numberOfSections);
-    foreach(i; 0..numberOfSections)
-    {
-        headers ~= readSectionHeader(f);
-    }
-    return headers;
-}
-
-class SectionData{
-    BYTE[] values;
-    alias values this;
-
-    override string toString() {
-        return values.map!(function(a) {
-            if ((cast(dchar)a).isPrintable) {
-                return a.to!char;
-            }
-            return '.';
-        }).to!string;
-    }
-}
-
-SectionData readSectionData(File f, SectionHeader header)
-{
-    SectionData code = new SectionData;
-    code.length = header.SizeOfRawData;
-    f.seek(header.PointerToRawData);
-    f.rawRead(code);
-
-    return code;
-}
-
-SectionData[] readSectionDatas(File f, SectionHeader[] headers)
-{
-    SectionData[] codes;
-    codes.reserve(headers.length);
-
-    foreach (h; headers)
-    {
-        codes ~= readSectionData(f, h);
-    }
-
-    return codes;
 }

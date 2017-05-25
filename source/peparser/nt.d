@@ -31,8 +31,8 @@ struct NTHeader
 
     MAGIC Magic;
 
-    /// 32bitか64bitかがあるのでプロパティにしてる
-    @property IMAGE_DATA_DIRECTORY[] imageDataDirectories()
+    /// 32bitか64bitかがあるので関数にしてる。見た目一緒だしいいよね
+    IMAGE_DATA_DIRECTORY[] imageDataDirectories()
     {
         if (Magic == MAGIC.HDR32) {
             return OptionalHeader32.DataDirectory;
@@ -42,7 +42,7 @@ struct NTHeader
         }
     }
 
-    @property ULONGLONG imageBase()
+    ULONGLONG imageBase()
     {
         if (Magic == MAGIC.HDR32) {
             return OptionalHeader32.ImageBase;
@@ -170,16 +170,5 @@ struct IMAGE_DATA_DIRECTORY
 			}
 	    }
         throw new Exception("Failed to Find Physical Address of RVA: " ~ rva.to!string);
-    }
-    DWORD physicalOffset(SectionHeader[] sectionHeaders) {
-        auto rva = VirtualAddress;
-        DWORD addr;
-        foreach(section; sectionHeaders) {
-		if (section.VirtualAddress <= rva &&
-			rva < section.VirtualAddress + section.SizeOfRawData) {
-				return -section.VirtualAddress + section.PointerToRawData;
-			}
-	    }
-        return -1;
     }
 }

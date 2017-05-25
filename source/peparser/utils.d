@@ -14,6 +14,10 @@ alias readDWORD = readT!DWORD;
 alias readUINT64 = readT!ULONGLONG;
 
 /// 任意の値を読む
+T read(T)(File f, ref T v) if (isArray(T) && v.length > 0) {
+    f.rawRead(v);
+    return v;
+}
 T read(T)(File f, ref T v) {
     f.rawRead((&v)[0..1]);
     return v;
@@ -55,6 +59,8 @@ byte[] readBlob(File f) {
     f.rawRead(buf);
     return buf;
 }
+
+
 
 /// 文字列を長さ付きで読む
 char[] readString(File f) {

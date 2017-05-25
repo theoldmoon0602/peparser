@@ -2,9 +2,8 @@ import std.stdio, std.range;
 import msdos;
 import nt;
 import sectionheader;
-import resource;
 import utils;
-import cliheader;
+import resourcessection;
 
 int main(string[] args)
 {
@@ -18,9 +17,7 @@ int main(string[] args)
 	auto ntheader = readNTHeader(f);
 	auto sectionHeaders = readSectionHeaders(f, ntheader.FileHeader.NumberOfSections);
 	auto cor20 = readCOR20HEADER(f, ntheader, sectionHeaders);
-	auto rscAddr = cor20.Resources.physicalAddr(sectionHeaders);
-	f.seek(rscAddr);
-	auto resourcesHeader = readDotResources(f);
+	auto resourcesHeader = readResourcesHeader(f);
 	writeln(resourcesHeader);
 	auto resources = readResources(f, resourcesHeader);
 	writeln(resources);	
