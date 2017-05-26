@@ -11,9 +11,9 @@ int main(string[] args)
 	auto pe = readPE(f);
 
 	writeln("===RESOURCES===");
-	writeln("NAME  :  VALUE");
+	writeln("NAME\t\tVALUE");
 	foreach(res;pe.resources) {
-		writeln(res.Name, " : ", res.Value);
+		writeln(res.Name, "\t\t", res.Value);
 	}
 	return 0;
 }
