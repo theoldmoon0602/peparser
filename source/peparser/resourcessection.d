@@ -1,4 +1,4 @@
-import std.stdio, std.utf, std.conv;
+import std.stdio, std.conv;
 
 import types, utils;
 
@@ -17,18 +17,18 @@ ResourcesHeader readResourcesHeader(File f)
     f.read(resource.ResourceCount);
     f.read(resource.ResourceTypeCount);
 
-    writeln(resource.ReaderType);
-
-
     foreach(i;0..resource.ResourceTypeCount) {
         resource.ResourceTypes ~= f.readBlob.toChars;
     }
 
     // 8byteパディング
     while (true) {
+        // 本来はこれを f.tell%8!=0 とすれば 8byte パディングできる
         while(f.tell%4!=0) {
             f.seek(f.tell+1);
         }
+
+        // でもなんかうまくいかないので PAD の文字が続く限りはパディングとみなす
         {
             auto p = f.tell;
             auto c = cast(char)f.readBYTE;
@@ -55,8 +55,8 @@ ResourcesHeader readResourcesHeader(File f)
 
         // utf16の文字列を読んでchar[]に変換する
         ResourceInfo info;
-        wstring a = f.readString.toUTF16;
-        info.Name = a.to!string.dup;
+        string a = (cast(wstring)f.readString).to!string;
+        info.Name = a.dup;
         f.read(info.Offset);
 
         resourceInfos ~= info;
