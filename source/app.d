@@ -10,6 +10,10 @@ int main(string[] args)
 	auto f = File(args[1], "rb");
 	auto pe = readPE(f);
 
-	writeln(pe.resources);
+	writeln("===RESOURCES===");
+	writeln("NAME  :  VALUE");
+	foreach(res;pe.resources) {
+		writeln(res.Name, " : ", res.Value);
+	}
 	return 0;
 }
