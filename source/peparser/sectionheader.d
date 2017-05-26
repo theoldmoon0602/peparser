@@ -77,3 +77,17 @@ struct SectionHeader
         return flags;
     }
 }
+
+
+/// VirtualAddress のファイル上での位置を求める
+DWORD physicalAddr(DWORD rva, SectionHeader[] sectionHeaders) {
+    DWORD addr;
+    foreach(section; sectionHeaders) {
+    if (section.VirtualAddress <= rva &&
+        rva < section.VirtualAddress + section.SizeOfRawData) {
+            addr = (rva - section.VirtualAddress) + section.PointerToRawData;
+            return addr;
+        }
+    }
+    throw new Exception("Failed to Find Physical Address of RVA: " ~ rva.to!string);
+}

@@ -160,15 +160,6 @@ struct IMAGE_DATA_DIRECTORY
 
     /// VirtualAddress のファイル上での位置を求める
     DWORD physicalAddr(SectionHeader[] sectionHeaders) {
-        auto rva = VirtualAddress;
-        DWORD addr;
-        foreach(section; sectionHeaders) {
-		if (section.VirtualAddress <= rva &&
-			rva < section.VirtualAddress + section.SizeOfRawData) {
-				addr = (rva - section.VirtualAddress) + section.PointerToRawData;
-                return addr;
-			}
-	    }
-        throw new Exception("Failed to Find Physical Address of RVA: " ~ rva.to!string);
+        return VirtualAddress.physicalAddr(sectionHeaders);
     }
 }
